@@ -148,7 +148,7 @@ public class Circle extends JPanel {
 
     }
 
-    public static void solveCollision(double dT, Circle c1, Circle c2){
+    public static void solveSpringCollision(double dT, Circle c1, Circle c2){
 
         int x1 = c1.getLocation().x;
         int y1 = c1.getLocation().y;
@@ -158,7 +158,7 @@ public class Circle extends JPanel {
 
         // distance vector and its norm
         Vector r = createDistanceVector(c1, c2);
-        Vector rUnit = new Vector(r.getX()/r.mag(), r.getY()/r.mag());
+        Vector rUnit = r.norm();
 
         if (r.mag() < c1.radius + c2.radius){
         // calculating force after collision
@@ -201,6 +201,50 @@ public class Circle extends JPanel {
         int x2f = (int) (c2.p.getX() * dT/c2.m) + (int) x2;
         int y2f = (int) (c2.p.getY() * dT/c2.m) + (int) y2;
         c2.setLocation(x2f, y2f);
+        
+    }
+
+    public static void solveCollision(double dT, Circle c1, Circle c2){
+
+
+        int x1 = c1.getLocation().x;
+        int y1 = c1.getLocation().y;
+
+        int x2 = c2.getLocation().x;
+        int y2 = c2.getLocation().y;
+
+        Vector r21 = createDistanceVector(c1, c2);
+        Vector r12 = createDistanceVector(c2, c1);
+
+        // k_o = 2*m_o/m_i + m_o,  o = observer, i = incoming 
+        double k1 = 2 * c2.m / (c1.m + c2.m);
+        double k2 = 2 * c2.m / (c1.m + c2.m);
+
+        // v_o,f = v_o - u_f, v_o = final velocity of observer
+        // u_f,o = dot(v_o - v_i, r_o - r_i) / ((r_o - r_i).mag())^2) * (r_o - r_i), u_f, o = update factor of observer
+
+        Vector updateFactor1 = r12.mult(k1 * Vector.dot(c1.getV().sub(c2.getV()), r12)/(r12.mag() * r12.mag()));
+        Vector updateFactor2 = r21.mult(k2 * Vector.dot(c2.getV().sub(c1.getV()), r21)/(r21.mag() * r21.mag()));
+        
+        Vector v1f = c1.getV().sub(updateFactor1);
+        Vector v2f = c2.getV().sub(updateFactor2);
+
+        c1.setV(v1f);
+        c2.setV(v2f);
+
+        
+
+        // // ball 1
+
+        // int x1f = (int) (c1.p.getX() * dT/c1.m) + (int) x1;
+        // int y1f = (int) (c1.p.getY() * dT/c1.m) + (int) y1;
+        // c1.setLocation(x1f, y1f);
+        
+        // // ball 2
+
+        // int x2f = (int) (c2.p.getX() * dT/c2.m) + (int) x2;
+        // int y2f = (int) (c2.p.getY() * dT/c2.m) + (int) y2;
+        // c2.setLocation(x2f, y2f);
         
     }
    

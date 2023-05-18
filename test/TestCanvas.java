@@ -17,10 +17,7 @@ public class TestCanvas extends JPanel implements ActionListener{
     public int t = 0;
     public int dT = 1;
 
-    
-    
     private static final Vector ZERO = new Vector(0, 0);
-    private boolean flag;
 
     public ArrayList<Circle> balls;
 
@@ -29,7 +26,7 @@ public class TestCanvas extends JPanel implements ActionListener{
 
     Vector v1 = new Vector(1, 3);
     Vector v2 = new Vector(-5, 2);
-    Vector v3 = new Vector(2, 1);
+    Vector v3 = new Vector(2, 2);
 
     Circle c = new Circle(RADIUS, 10, v1, Color.RED, "c");
     Circle c2 = new Circle(20, "c2");
@@ -37,12 +34,7 @@ public class TestCanvas extends JPanel implements ActionListener{
     Circle c4 = new Circle(20);
     // Circle c5 = new Circle(20);
 
-    Grid g = new Grid(WIDTH, HEIGHT, 10, 10, Color.BLACK);
-
-    // float COOLDOWN_TIME = 10; //in seconds
-
-    // private float cooldown = 0;
-    
+    Grid g = new Grid(WIDTH, HEIGHT, 10, 10, Color.BLACK);    
 
     TestCanvas(){
         // count = 0;
@@ -56,7 +48,8 @@ public class TestCanvas extends JPanel implements ActionListener{
         colors = new ArrayList<>(Arrays.asList(color));
         JFrame frame = new JFrame("Moving Circles");
         c2.setV(v2);
-        // c3.setV(v3);
+        c3.setV(v3);
+        c4.setV(v3);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(WIDTH, HEIGHT));
         frame.setSize(WIDTH, HEIGHT);

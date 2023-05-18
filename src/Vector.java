@@ -37,6 +37,24 @@ public class Vector {
         return new Vector(x*scalar, y*scalar);
     }
 
+    public Vector mult(Vector v){
+        return new Vector(x * v.getX(), y* v.getY());
+    }
+
+
+    public Vector add(Vector v){
+        return new Vector(x + v.getX(), y + v.getY());
+    }
+
+    public Vector sub(Vector v){
+        return new Vector(x - v.getX(), y - v.getY());
+    }
+
+    public static double dot(Vector v1, Vector v2){
+        return (v1.getX() * v2.getX()) + (v1.getY() * v2.getY());
+    }
+
+
     
 
 }
