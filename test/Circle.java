@@ -1,22 +1,16 @@
 package test;
 
-import java.util.*;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import src.Vector;
 
 public class Circle extends JPanel {
-
-    private int x;
-    private int y;
     private double m;
     public int radius;
     private String name;
@@ -65,8 +59,6 @@ public class Circle extends JPanel {
         this.radius = radius;
         this.m = mass;
         this.v = V;
-        this.x = 0;
-        this.y = 0;
         // this.f = new Vector(0,0);
         this.p = new Vector(m*v.getX(), m*v.getY());
         this.c = color;
