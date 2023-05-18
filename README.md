@@ -6,6 +6,7 @@ Collision handling:
 
 Motion:
 - Momentum impulse w/ Spring Force Model (currently implemented)
+  - Change the spring force constant `K` in `Circle.java` if you wish to change the force on collision impact.
 - Solution for 2D Elastic collision (in progress)
 
 Current progress:
