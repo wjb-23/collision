@@ -17,38 +17,60 @@ public class Circle extends JPanel {
 
     private int x;
     private int y;
-    private int m;
-    private int radius;
+    private double m;
+    public int radius;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
 
     private Vector v;
     private Vector p;
-    private Vector f;
 
     private Color c;
 
-    private static final int K = 101;
+    private static final int K = 30;
     private static final int MASS = 10;
 
-    public Circle( int radius) {
+    public Circle(int radius, String name) {
         this.radius = radius;
         this.m = MASS;
         this.v = new Vector(0, 0);
         this.p = new Vector(0,0);
-        this.f = new Vector(0,0);
         this.c = Color.BLUE;
+        this.name = name;
         this.setPreferredSize(new Dimension(2 * radius, 2 * radius));
 
     }
 
-    public Circle(int radius, int mass, Vector V, Color color) {
+    public Circle(int radius) {
+        this.radius = radius;
+        this.m = MASS;
+        this.v = new Vector(0, 0);
+        this.p = new Vector(0,0);
+        this.c = Color.BLUE;
+        this.name = "circle";
+        this.setPreferredSize(new Dimension(2 * radius, 2 * radius));
+
+    }
+
+    public Circle(int radius, double mass, Vector V, Color color, String name) {
         this.radius = radius;
         this.m = mass;
         this.v = V;
         this.x = 0;
         this.y = 0;
-        this.f = new Vector(0,0);
+        // this.f = new Vector(0,0);
         this.p = new Vector(m*v.getX(), m*v.getY());
         this.c = color;
+        this.name = name;
     }
 
     public void setColor(Color color){
@@ -68,7 +90,7 @@ public class Circle extends JPanel {
     
     }
 
-    public void move(int dT, int WallX, int WallY, ArrayList<Circle> balls) {
+    public void move(double dT, int WallX, int WallY) {
 
         // bound issues
         // nested for loops for collison handling -> ~1300 objects before frame drops
@@ -77,7 +99,9 @@ public class Circle extends JPanel {
 
         int x = getLocation().x;
         int y = getLocation().y;
-        
+
+        // Wall Collision handling
+
         if ((x + radius)>= WallX - radius || x < 0){
             p.setX(-p.getX());
         }
@@ -86,16 +110,12 @@ public class Circle extends JPanel {
             
         }
 
-        // Collision handling
-
-
         // Update position
 
-        x = (int) (p.getX() * dT)/m + x;
-        y = (int) (p.getY() * dT)/m + y;
-        setLocation(x, y);
+        int xf = (int) (p.getX() * dT/m) + x;
+        int yf = (int) (p.getY() * dT/m) + y;
         
-
+        setLocation(xf, yf);
         
     }
 
@@ -104,13 +124,11 @@ public class Circle extends JPanel {
     public static boolean collision(Circle c1, Circle c2){
 
         boolean check = false;
-        // System.out.println("ball 2: " + new Point((int)x2 + c2.radius, (int)y2 + c2.radius).toString());
         double distance = distance(c1, c2);
         // System.out.println(distance);
 
         if (distance < (c1.radius + c2.radius)){
             check = true;
-            // System.out.println('t');
         } else {
             check = false;
         }
@@ -120,59 +138,78 @@ public class Circle extends JPanel {
     }
 
     public static double distance(Circle c1, Circle c2){
-
-        double x1 = c1.getLocation().getX();
-        double y1 = c1.getLocation().getY();
-
-        double x2 = c2.getLocation().getX();
-        double y2 = c2.getLocation().getY();
-
-        return Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
+        Vector r = createDistanceVector(c1, c2);
+        return r.mag();
 
     }
 
-    public static void solveCollision(int dT, Circle c1, Circle c2){
+    public static Vector createDistanceVector(Circle c1, Circle c2){
 
-        // location of balls
         double x1 = c1.getLocation().getX();
         double y1 = c1.getLocation().getY();
 
         double x2 = c2.getLocation().getX();
         double y2 = c2.getLocation().getY();
+        
+
+        return new Vector(x2 - x1, y2 - y1);
+
+    }
+
+    public static void solveCollision(double dT, Circle c1, Circle c2){
+
+        int x1 = c1.getLocation().x;
+        int y1 = c1.getLocation().y;
+
+        int x2 = c2.getLocation().x;
+        int y2 = c2.getLocation().y;
 
         // distance vector and its norm
-        Vector r = new Vector(x2 - x1, y2 - y1);
-        Vector rUnit = new Vector((x2 - x1)/r.mag(), (y2 - y1)/r.mag());
+        Vector r = createDistanceVector(c1, c2);
+        Vector rUnit = new Vector(r.getX()/r.mag(), r.getY()/r.mag());
 
+        if (r.mag() < c1.radius + c2.radius){
         // calculating force after collision
-        double f21x = K * (r.mag() - (c1.radius + c2.radius)) * rUnit.getX();
-        double f21y = K * (r.mag() - (c1.radius + c2.radius)) * rUnit.getY();
+            double f21x = K * (r.mag() - (c1.radius + c2.radius)) * rUnit.getX();
+            double f21y = K * (r.mag() - (c1.radius + c2.radius)) * rUnit.getY();
 
-        double f12x = -f21x;
-        double f12y = -f21y;
 
-        Vector f12 = new Vector (f12x, f12y);
-        Vector f21 = new Vector (f21x, f21y);
+            double f12x = -f21x;
+            double f12y = -f21y;
 
-        c1.setF(f21);
-        c2.setF(f12);
+            Vector f12 = new Vector (f12x, f12y);
+            Vector f21 = new Vector (f21x, f21y);
 
-        double p1x = c1.p.getX() + f21.getX()*dT;
-        double p1y = c1.p.getY() + f21.getY()*dT;
+            double p1x = c1.p.getX() + (f21.getX() * dT) / c1.m;
+            double p1y = c1.p.getY() + (f21.getY() * dT) / c1.m;
+            
+            double p2x = c2.p.getX() + (f12.getX() * dT) / c2.m;
+            double p2y = c2.p.getY() + (f12.getY() * dT) / c2.m;
+            
 
-        double p2x = c1.p.getX() + f12.getX()*dT;
-        double p2y = c1.p.getY() + f12.getY()*dT;
+            Vector p1 = new Vector(p1x, p1y);
+            Vector p2 = new Vector(p2x, p2y);
 
-        c1.setV(new Vector(p1x / c1.m, p1y / c1.m));
-        c2.setV(new Vector(p2x / c2.m, p2y / c2.m));
-    }
+            c1.v = p1.mult(1/c1.m);
+            c2.v = p2.mult(1/c2.m);
 
-    public Vector getF() {
-        return f;
-    }
+            c1.p = p1;
+            c2.p = p2;
 
-    public void setF(Vector f) {
-        this.f = f;
+        }
+
+        // ball 1
+
+        int x1f = (int) (c1.p.getX() * dT/c1.m) + (int) x1;
+        int y1f = (int) (c1.p.getY() * dT/c1.m) + (int) y1;
+        c1.setLocation(x1f, y1f);
+        
+        // ball 2
+
+        int x2f = (int) (c2.p.getX() * dT/c2.m) + (int) x2;
+        int y2f = (int) (c2.p.getY() * dT/c2.m) + (int) y2;
+        c2.setLocation(x2f, y2f);
+        
     }
    
 

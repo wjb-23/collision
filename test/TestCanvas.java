@@ -11,10 +11,16 @@ import src.Vector;
 
 public class TestCanvas extends JPanel implements ActionListener{
 
-    private static final int HEIGHT = 300;
-    private static final int WIDTH = 300;
+    private static final int HEIGHT = 400;
+    private static final int WIDTH = 400;
     private static final int RADIUS = 30;
+    public int t = 0;
+    public int dT = 1;
+
+    
+    
     private static final Vector ZERO = new Vector(0, 0);
+    private boolean flag;
 
     public ArrayList<Circle> balls;
 
@@ -25,38 +31,39 @@ public class TestCanvas extends JPanel implements ActionListener{
     Vector v2 = new Vector(-5, 2);
     Vector v3 = new Vector(2, 1);
 
-    Circle c = new Circle(RADIUS, 5, v1, Color.RED);
-    Circle c2 = new Circle(20);
-    Circle c3 = new Circle(20);
+    Circle c = new Circle(RADIUS, 10, v1, Color.RED, "c");
+    Circle c2 = new Circle(20, "c2");
+    Circle c3 = new Circle(20, "c3");
     Circle c4 = new Circle(20);
-    Circle c5 = new Circle(20);
+    // Circle c5 = new Circle(20);
 
-    Grid g = new Grid(WIDTH, HEIGHT, 10, 10);
+    Grid g = new Grid(WIDTH, HEIGHT, 10, 10, Color.BLACK);
 
-    float COOLDOWN_TIME = 10; //in seconds
+    // float COOLDOWN_TIME = 10; //in seconds
 
-    private float cooldown = 0;
+    // private float cooldown = 0;
     
 
     TestCanvas(){
+        // count = 0;
         balls = new ArrayList<>();
         balls.add(c);
         balls.add(c2);
         balls.add(c3);
-        // balls.add(c4);
+        balls.add(c4);
         // balls.add(c5);
         Color[] color = {Color.BLUE, Color.BLACK, Color.ORANGE, Color.ORANGE , Color.CYAN, Color.LIGHT_GRAY};
         colors = new ArrayList<>(Arrays.asList(color));
         JFrame frame = new JFrame("Moving Circles");
         c2.setV(v2);
-        c3.setV(v3);
+        // c3.setV(v3);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(WIDTH, HEIGHT));
         frame.setSize(WIDTH, HEIGHT);
         
     
         frame.setVisible(true);
-        timer = new Timer(30, this);
+        timer = new Timer(40, this);
         timer.start();
 
         for (Circle c : balls){
@@ -69,42 +76,29 @@ public class TestCanvas extends JPanel implements ActionListener{
 
         c2.setLocation(100,100);
         c3.setLocation(200,100);
-        // c4.setLocation(250,100);
+        c4.setLocation(250,100);
         // c5.setLocation(200,150);
+
 
         
 
     }
 
-    public void Update(float time){
-            cooldown -= time;
-    }
-
-    public boolean attack(){
-        if(cooldown <= 0){
-            cooldown = COOLDOWN_TIME; 
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         for (Circle c : balls){
-            c.move(1, WIDTH, HEIGHT, balls);
+            c.move(1, WIDTH, HEIGHT);
         }
         for (Circle c : balls){
             for (Circle b : balls){
-                if (Circle.collision(c, b)){
-                    
-                }         
-            }
+                if (c != b)
+                    if (Circle.collision(c, b)){
+                        Circle.solveCollision(1, c, b);
+                    }
+            }  
+            
         }
 
-        // System.out.println(Circle.distance(c,c2));
-
-        repaint();
     }
 
     public void changeColor(Circle c){

@@ -21,12 +21,14 @@ public class Grid extends JPanel{
     private int yInterval;
     private int rows;
     private int cols;
+    private Color color;
 
-    Grid(int w, int h, int row, int col){
+    Grid(int w, int h, int row, int col, Color color){
         this.width = w;
         this.height = h;
         this.rows = row;
         this.cols = col;
+        this.color = color;
         this.xInterval = w / col;
         this.yInterval = h / row;
 
@@ -36,7 +38,7 @@ public class Grid extends JPanel{
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2D = (Graphics2D) g;
-        g2D.setPaint(Color.black);
+        g2D.setPaint(color);
         for (int i = 0; i <= cols; i++){
             g2D.drawLine(i * xInterval, 0, i * xInterval, height);
         }
