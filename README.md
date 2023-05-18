@@ -5,4 +5,4 @@ Collision handling:
 - Solution for 2D Elastic collision (in progress)
 
 Current progress:
-- Look at `TestCanvas.java` and run it to view a simulation (four balls are currently loaded).
+- Look at `TestCanvas.java` in the `test` folder and run it to view a simulation (four balls are currently loaded).
