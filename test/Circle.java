@@ -30,7 +30,7 @@ public class Circle extends JPanel {
 
     private Color c;
 
-    private static final int K = 30;
+    private static final int K = 20;
     private static final int MASS = 10;
 
     public Circle(int radius, String name) {
@@ -150,13 +150,8 @@ public class Circle extends JPanel {
 
     public static void solveSpringCollision(double dT, Circle c1, Circle c2){
 
-        int x1 = c1.getLocation().x;
-        int y1 = c1.getLocation().y;
-
-        int x2 = c2.getLocation().x;
-        int y2 = c2.getLocation().y;
-
         // distance vector and its norm
+        
         Vector r = createDistanceVector(c1, c2);
         Vector rUnit = r.norm();
 
@@ -182,36 +177,29 @@ public class Circle extends JPanel {
             Vector p1 = new Vector(p1x, p1y);
             Vector p2 = new Vector(p2x, p2y);
 
-            c1.v = p1.mult(1/c1.m);
-            c2.v = p2.mult(1/c2.m);
+            // c1.v = p1.mult(1/c1.m);
+            // c2.v = p2.mult(1/c2.m);
 
             c1.p = p1;
             c2.p = p2;
 
         }
-
-        // ball 1
-
-        int x1f = (int) (c1.p.getX() * dT/c1.m) + (int) x1;
-        int y1f = (int) (c1.p.getY() * dT/c1.m) + (int) y1;
-        c1.setLocation(x1f, y1f);
-        
-        // ball 2
-
-        int x2f = (int) (c2.p.getX() * dT/c2.m) + (int) x2;
-        int y2f = (int) (c2.p.getY() * dT/c2.m) + (int) y2;
-        c2.setLocation(x2f, y2f);
         
     }
+
+    /*
+    Substantially more buggy,
+    maybe removing double -> int casting (changing frame position setting) or more advanced collision checking would fix this.
+     */ 
 
     public static void solveCollision(double dT, Circle c1, Circle c2){
 
 
-        int x1 = c1.getLocation().x;
-        int y1 = c1.getLocation().y;
+        // int x1 = c1.getLocation().x;
+        // int y1 = c1.getLocation().y;
 
-        int x2 = c2.getLocation().x;
-        int y2 = c2.getLocation().y;
+        // int x2 = c2.getLocation().x;
+        // int y2 = c2.getLocation().y;
 
         Vector r21 = createDistanceVector(c1, c2);
         Vector r12 = createDistanceVector(c2, c1);
@@ -231,20 +219,6 @@ public class Circle extends JPanel {
 
         c1.setV(v1f);
         c2.setV(v2f);
-
-        
-
-        // // ball 1
-
-        // int x1f = (int) (c1.p.getX() * dT/c1.m) + (int) x1;
-        // int y1f = (int) (c1.p.getY() * dT/c1.m) + (int) y1;
-        // c1.setLocation(x1f, y1f);
-        
-        // // ball 2
-
-        // int x2f = (int) (c2.p.getX() * dT/c2.m) + (int) x2;
-        // int y2f = (int) (c2.p.getY() * dT/c2.m) + (int) y2;
-        // c2.setLocation(x2f, y2f);
         
     }
    

@@ -14,25 +14,26 @@ public class TestCanvas extends JPanel implements ActionListener{
     private static final int HEIGHT = 400;
     private static final int WIDTH = 400;
     private static final int RADIUS = 30;
+
     public int t = 0;
     public int dT = 1;
 
-    private static final Vector ZERO = new Vector(0, 0);
-
     public ArrayList<Circle> balls;
+    public ArrayList<Color> colors;
 
     Timer timer;
-    ArrayList<Color> colors;
+    
 
     Vector v1 = new Vector(1, 3);
     Vector v2 = new Vector(-5, 2);
-    Vector v3 = new Vector(2, 2);
+    Vector v3 = new Vector(-2, -2);
+    Vector v4 = new Vector(-2, -3);
 
     Circle c = new Circle(RADIUS, 10, v1, Color.RED, "c");
-    Circle c2 = new Circle(20, "c2");
-    Circle c3 = new Circle(20, "c3");
+    Circle c2 = new Circle(25, "c2");
+    Circle c3 = new Circle(22, "c3");
     Circle c4 = new Circle(20);
-    // Circle c5 = new Circle(20);
+    Circle c5 = new Circle(20);
 
     Grid g = new Grid(WIDTH, HEIGHT, 10, 10, Color.BLACK);    
 
@@ -49,7 +50,7 @@ public class TestCanvas extends JPanel implements ActionListener{
         JFrame frame = new JFrame("Moving Circles");
         c2.setV(v2);
         c3.setV(v3);
-        c4.setV(v3);
+        c4.setV(v4);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(WIDTH, HEIGHT));
         frame.setSize(WIDTH, HEIGHT);
@@ -86,7 +87,8 @@ public class TestCanvas extends JPanel implements ActionListener{
             for (Circle b : balls){
                 if (c != b)
                     if (Circle.collision(c, b)){
-                        Circle.solveCollision(1, c, b);
+                        // Circle.solveCollision(1, c, b);
+                        Circle.solveSpringCollision(1, c, b);
                     }
             }  
             
@@ -94,9 +96,8 @@ public class TestCanvas extends JPanel implements ActionListener{
 
     }
 
-    public void changeColor(Circle c){
+    public void generateBalls(){
         
-
     }
 
     public static void main(String[] args) {

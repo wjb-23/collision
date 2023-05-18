@@ -1,17 +1,11 @@
 package test;
 
-import java.util.*;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.List;
-import java.awt.Point;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import src.Vector;
 
 public class Grid extends JPanel{
 
