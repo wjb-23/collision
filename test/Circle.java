@@ -5,6 +5,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.JPanel;
 
@@ -33,14 +37,23 @@ public class Circle extends JPanel {
     private static final int K = 20;
     private static final int MASS = 10;
 
-    public Circle(int radius, String name) {
+    Point circleCenter;
+    Point prevPt;
+
+    public Circle(int radius, String name, Color color) {
         this.radius = radius;
         this.m = MASS;
         this.v = new Vector(0, 0);
         this.p = new Vector(0,0);
-        this.c = Color.BLUE;
         this.name = name;
+        this.c = color;
         this.setPreferredSize(new Dimension(2 * radius, 2 * radius));
+        this.circleCenter = new Point(0, 0);
+        ClickListener clickListener = new ClickListener();
+        DragListener dragListener = new DragListener();
+        this.addMouseListener(clickListener);
+        this.addMouseMotionListener(dragListener);
+
 
     }
 
@@ -52,6 +65,11 @@ public class Circle extends JPanel {
         this.c = Color.BLUE;
         this.name = "circle";
         this.setPreferredSize(new Dimension(2 * radius, 2 * radius));
+        this.circleCenter = new Point(0, 0);
+        ClickListener clickListener = new ClickListener();
+        DragListener dragListener = new DragListener();
+        this.addMouseListener(clickListener);
+        this.addMouseMotionListener(dragListener);
 
     }
 
@@ -63,6 +81,11 @@ public class Circle extends JPanel {
         this.p = new Vector(m*v.getX(), m*v.getY());
         this.c = color;
         this.name = name;
+        this.circleCenter = new Point(0, 0);
+        ClickListener clickListener = new ClickListener();
+        DragListener dragListener = new DragListener();
+        this.addMouseListener(clickListener);
+        this.addMouseMotionListener(dragListener);
     }
 
     public void setColor(Color color){
@@ -74,12 +97,37 @@ public class Circle extends JPanel {
     protected void paintComponent(Graphics g) {
         Graphics2D g2D = (Graphics2D) g;
         g2D.setPaint(c);
-        g2D.fillOval(0, 0, 2*radius, 2*radius);
+        g2D.fillOval(circleCenter.x, circleCenter.y, 2*radius, 2*radius);
         g2D.setPaint(Color.BLACK);
         g2D.setStroke(new BasicStroke(1));
-        g2D.drawOval(0, 0, 2*radius, 2*radius);
+        g2D.drawOval(circleCenter.x, circleCenter.y, 2*radius, 2*radius);
+        ClickListener clickListener = new ClickListener();
+        DragListener dragListener = new DragListener();
+        this.addMouseListener(clickListener);
+        this.addMouseMotionListener(dragListener);
         
     
+    }
+
+    private class ClickListener extends MouseAdapter{
+        public void mousePressed(MouseEvent e){
+            prevPt = e.getPoint();
+            System.out.println("hi");
+            
+        }
+
+    }
+
+    private class DragListener extends MouseMotionAdapter{
+        public void mouseDragged(MouseEvent e){
+            Point currentPt = e.getPoint();
+
+            circleCenter.translate((int)(currentPt.getX() - prevPt.getX()), (int)(currentPt.getY() - prevPt.getY()));
+
+            prevPt = currentPt;
+            
+        }
+        
     }
 
     public void move(double dT, int WallX, int WallY) {
@@ -188,12 +236,11 @@ public class Circle extends JPanel {
     }
 
     /*
-    Substantially more buggy,
+    This model is substantially more buggy,
     maybe removing double -> int casting (changing frame position setting) or more advanced collision checking would fix this.
      */ 
 
-    public static void solveCollision(double dT, Circle c1, Circle c2){
-
+    public static void solveCollision1(double dT, Circle c1, Circle c2){
 
         // int x1 = c1.getLocation().x;
         // int y1 = c1.getLocation().y;
@@ -206,7 +253,7 @@ public class Circle extends JPanel {
 
         // k_o = 2*m_o/m_i + m_o,  o = observer, i = incoming 
         double k1 = 2 * c2.m / (c1.m + c2.m);
-        double k2 = 2 * c2.m / (c1.m + c2.m);
+        double k2 = 2 * c1.m / (c1.m + c2.m);
 
         // v_o,f = v_o - u_f, v_o = final velocity of observer
         // u_f,o = dot(v_o - v_i, r_o - r_i) / ((r_o - r_i).mag())^2) * (r_o - r_i), u_f, o = update factor of observer
@@ -220,8 +267,36 @@ public class Circle extends JPanel {
         c1.setV(v1f);
         c2.setV(v2f);
         
-    }
-   
+    } 
+
+    public static void solveCollision2(double dT, Circle c1, Circle c2){
+
+        // int x1 = c1.getLocation().x;
+        // int y1 = c1.getLocation().y;
+
+        // int x2 = c2.getLocation().x;
+        // int y2 = c2.getLocation().y;
+
+        Vector r21 = createDistanceVector(c1, c2);
+        Vector r12 = createDistanceVector(c2, c1);
+
+        // k_o = 2*m_o/m_i + m_o,  o = observer, i = incoming 
+        double k1 = 2 * c2.m / (c1.m + c2.m);
+        double k2 = 2 * c1.m / (c1.m + c2.m);
+
+        // v_o,f = v_o - u_f, v_o = final velocity of observer
+        // u_f,o = dot(v_o - v_i, r_o - r_i) / ((r_o - r_i).mag())^2) * (r_o - r_i), u_f, o = update factor of observer
+
+        Vector updateFactor1 = r12.mult(k1 * Vector.dot(c1.getV().sub(c2.getV()), r12)/(r12.mag() * r12.mag()));
+        Vector updateFactor2 = r21.mult(k2 * Vector.dot(c2.getV().sub(c1.getV()), r21)/(r21.mag() * r21.mag()));
+        
+        Vector v1f = c1.getV().sub(updateFactor1);
+        Vector v2f = c2.getV().sub(updateFactor2);
+
+        c1.setV(v1f);
+        c2.setV(v2f);
+        
+    } 
 
     public Vector getP() {
         return p;
@@ -231,13 +306,9 @@ public class Circle extends JPanel {
         this.p = p;
     }
 
-
-
     public Vector getV() {
         return v;
     }
-
-
 
     public void setV(Vector v) {
         this.v = v;

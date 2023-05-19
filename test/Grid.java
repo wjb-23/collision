@@ -1,9 +1,13 @@
 package test;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 
@@ -34,6 +38,7 @@ public class Grid extends JPanel{
         Graphics2D g2D = (Graphics2D) g;
         g2D.setPaint(color);
         for (int i = 0; i <= cols; i++){
+            g2D.setStroke(new BasicStroke(2));
             g2D.drawLine(i * xInterval, 0, i * xInterval, height);
         }
         for (int i = 0; i <= rows; i++){
@@ -42,5 +47,42 @@ public class Grid extends JPanel{
         
     
     }
+
+    public Circle getLargestBall(ArrayList<Circle> balls){
+        Circle largestD = null;
+        for (Circle c : balls){
+            if (largestD == null){
+                largestD = c;
+            } else if (c.radius > largestD.radius){
+                largestD = c;
+            }
+            
+        }
+        return largestD;
+    }
+
+    public void placeBalls(ArrayList<Circle> balls, JFrame frame){
+
+        int largestR = getLargestBall(balls).radius;
+        System.out.println(largestR);
+
+        for (Circle c : balls){
+            frame.add(c);
+            frame.pack();
+            
+        }
+
+        for (int i = 1; i <= balls.size(); i++){
+            Circle c = balls.get(i - 1);
+            c.setLocation(i*largestR+20, largestR+20);
+            
+            
+            
+            System.out.println(" placed");     
+        }
+
+        
+    }
+    
     
 }
