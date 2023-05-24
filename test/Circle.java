@@ -6,16 +6,14 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.util.*;
 
 import javax.swing.JPanel;
 
 import src.Vector;
 
 public class Circle extends JPanel {
-    private double m;
+    public double m;
     public int radius;
     private String name;
 
@@ -30,11 +28,11 @@ public class Circle extends JPanel {
 
 
     private Vector v;
-    private Vector p;
+    public Vector p;
 
     private Color c;
 
-    private static final int K = 20;
+    private static final int K = 15;
     private static final int MASS = 10;
 
     Point circleCenter;
@@ -48,11 +46,6 @@ public class Circle extends JPanel {
         this.name = name;
         this.c = color;
         this.setPreferredSize(new Dimension(2 * radius, 2 * radius));
-        this.circleCenter = new Point(0, 0);
-        ClickListener clickListener = new ClickListener();
-        DragListener dragListener = new DragListener();
-        this.addMouseListener(clickListener);
-        this.addMouseMotionListener(dragListener);
 
 
     }
@@ -65,11 +58,6 @@ public class Circle extends JPanel {
         this.c = Color.BLUE;
         this.name = "circle";
         this.setPreferredSize(new Dimension(2 * radius, 2 * radius));
-        this.circleCenter = new Point(0, 0);
-        ClickListener clickListener = new ClickListener();
-        DragListener dragListener = new DragListener();
-        this.addMouseListener(clickListener);
-        this.addMouseMotionListener(dragListener);
 
     }
 
@@ -81,11 +69,6 @@ public class Circle extends JPanel {
         this.p = new Vector(m*v.getX(), m*v.getY());
         this.c = color;
         this.name = name;
-        this.circleCenter = new Point(0, 0);
-        ClickListener clickListener = new ClickListener();
-        DragListener dragListener = new DragListener();
-        this.addMouseListener(clickListener);
-        this.addMouseMotionListener(dragListener);
     }
 
     public void setColor(Color color){
@@ -97,38 +80,34 @@ public class Circle extends JPanel {
     protected void paintComponent(Graphics g) {
         Graphics2D g2D = (Graphics2D) g;
         g2D.setPaint(c);
-        g2D.fillOval(circleCenter.x, circleCenter.y, 2*radius, 2*radius);
+        g2D.fillOval(0, 0, 2*radius, 2*radius);
         g2D.setPaint(Color.BLACK);
         g2D.setStroke(new BasicStroke(1));
-        g2D.drawOval(circleCenter.x, circleCenter.y, 2*radius, 2*radius);
-        ClickListener clickListener = new ClickListener();
-        DragListener dragListener = new DragListener();
-        this.addMouseListener(clickListener);
-        this.addMouseMotionListener(dragListener);
+        g2D.drawOval(0, 0, 2*radius, 2*radius);
         
     
     }
 
-    private class ClickListener extends MouseAdapter{
-        public void mousePressed(MouseEvent e){
-            prevPt = e.getPoint();
-            System.out.println("hi");
+    // private class ClickListener extends MouseAdapter{
+    //     public void mousePressed(MouseEvent e){
+    //         prevPt = e.getPoint();
+    //         System.out.println("hi");
             
-        }
+    //     }
 
-    }
+    // }
 
-    private class DragListener extends MouseMotionAdapter{
-        public void mouseDragged(MouseEvent e){
-            Point currentPt = e.getPoint();
+    // private class DragListener extends MouseMotionAdapter{
+    //     public void mouseDragged(MouseEvent e){
+    //         Point currentPt = e.getPoint();
 
-            circleCenter.translate((int)(currentPt.getX() - prevPt.getX()), (int)(currentPt.getY() - prevPt.getY()));
+    //         circleCenter.translate((int)(currentPt.getX() - prevPt.getX()), (int)(currentPt.getY() - prevPt.getY()));
 
-            prevPt = currentPt;
+    //         prevPt = currentPt;
             
-        }
+    //     }
         
-    }
+    // }
 
     public void move(double dT, int WallX, int WallY) {
 
@@ -242,12 +221,6 @@ public class Circle extends JPanel {
 
     public static void solveCollision1(double dT, Circle c1, Circle c2){
 
-        // int x1 = c1.getLocation().x;
-        // int y1 = c1.getLocation().y;
-
-        // int x2 = c2.getLocation().x;
-        // int y2 = c2.getLocation().y;
-
         Vector r21 = createDistanceVector(c1, c2);
         Vector r12 = createDistanceVector(c2, c1);
 
@@ -314,5 +287,7 @@ public class Circle extends JPanel {
         this.v = v;
         this.p = new Vector(v.getX()*m, v.getY()*m);
     }
+
+    
 
 }

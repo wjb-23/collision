@@ -4,7 +4,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -67,6 +66,7 @@ public class Grid extends JPanel{
         System.out.println(largestR);
 
         for (Circle c : balls){
+            System.out.println(c.getName());
             frame.add(c);
             frame.pack();
             
@@ -74,7 +74,7 @@ public class Grid extends JPanel{
 
         for (int i = 1; i <= balls.size(); i++){
             Circle c = balls.get(i - 1);
-            c.setLocation(i*largestR+20, largestR+20);
+            c.setLocation(i*largestR+100, i*largestR+100);
             
             
             

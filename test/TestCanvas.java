@@ -15,6 +15,10 @@ public class TestCanvas extends JPanel implements ActionListener{
     private static final int WIDTH = 600;
     private static final int RADIUS = 30;
 
+    private int gridHeight = HEIGHT - 200;
+    private int gridWidth = WIDTH - 200;
+    
+
     public int t = 0;
     public int dT = 1;
 
@@ -30,15 +34,15 @@ public class TestCanvas extends JPanel implements ActionListener{
     Vector v3 = new Vector(-5, -2);
     Vector v4 = new Vector(-2, -3);
 
-    Circle c = new Circle(RADIUS, 10, new Vector(2,0), Color.RED, "c");
-    Circle c2 = new Circle(25, "c2", Color.MAGENTA);
-    Circle c3 = new Circle(22, "c3", Color.CYAN);
-    Circle c4 = new Circle(20);
-    Circle c5 = new Circle(20);
-    Circle c6 = new Circle(25, "c2", Color.MAGENTA);
-    Circle c7 = new Circle(42, "c5", Color.CYAN);
-    Circle c8 = new Circle(20);
-    Circle c9 = new Circle(20);
+    Circle c = new Circle(RADIUS, 10, new Vector(2,1), Color.RED, "c");
+    Circle c2 = new Circle(RADIUS, "c2", Color.MAGENTA);
+    Circle c3 = new Circle(RADIUS, "c3", Color.CYAN);
+    Circle c4 = new Circle(RADIUS);
+    Circle c5 = new Circle(RADIUS);
+    Circle c6 = new Circle(RADIUS, "c2", Color.MAGENTA);
+    Circle c7 = new Circle(RADIUS, "c5", Color.CYAN);
+    Circle c8 = new Circle(RADIUS);
+    Circle c9 = new Circle(RADIUS);
 
     public Grid g;    
 
@@ -46,17 +50,17 @@ public class TestCanvas extends JPanel implements ActionListener{
         balls = new ArrayList<>();
         balls.add(c);
         balls.add(c2);
-        // balls.add(c3);
-        // balls.add(c4);
-        // balls.add(c5);
-        // balls.add(c6);
+        balls.add(c3);
+        balls.add(c4);
+        balls.add(c5);
+        balls.add(c6);
         // balls.add(c7);
         // balls.add(c8);
-        // balls.add(c5);
+        // balls.add(c9);
         Color[] color = {Color.BLUE, Color.BLACK, Color.ORANGE, Color.ORANGE , Color.CYAN, Color.LIGHT_GRAY};
         colors = new ArrayList<>(Arrays.asList(color));
         frame = new JFrame("Elastic Collision");
-        g = new Grid(WIDTH - 200, HEIGHT - 200, 10, 10, Color.BLACK);
+        g = new Grid(gridWidth, gridHeight, 10, 10, Color.BLACK);
         // c2.setV(v2);
         // c3.setV(v3);
         // c4.setV(v4);
@@ -65,7 +69,7 @@ public class TestCanvas extends JPanel implements ActionListener{
         frame.setSize(WIDTH, HEIGHT);
     
         frame.setVisible(true);
-        timer = new Timer(40, this);
+        timer = new Timer(20, this);
         timer.start();
 
 
@@ -81,7 +85,7 @@ public class TestCanvas extends JPanel implements ActionListener{
     // @Override
     public void actionPerformed(ActionEvent e) {
         for (Circle c : balls){
-            c.move(1, WIDTH, HEIGHT);
+            c.move(0.5, gridWidth, gridHeight);
         }
         for (Circle c : balls){
             for (Circle b : balls){
@@ -89,7 +93,7 @@ public class TestCanvas extends JPanel implements ActionListener{
                     if (Circle.collision(c, b)){
                         System.out.println();
                         // Circle.solveCollision1(1, c, b);
-                        Circle.solveSpringCollision(1, c, b);
+                        Circle.solveSpringCollision(0.5, c, b);
                     }
             }  
             
